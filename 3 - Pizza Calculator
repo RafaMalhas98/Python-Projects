@@ -12,14 +12,16 @@ elif size == "M":
     pizza_bill += 20
 elif size == "L":
     pizza_bill += 25
-    
+else:
+    print("Please provide a valid option.")
+
 #Checks if the user wants pepperoni
 if pepperoni == "Y":
     if size == "S":
         pizza_bill += 2
     elif size == "M" or size == "L":
         pizza_bill += 3
-        
+
 #Checks if the user wants extra cheese
 if extra_cheese == "Y":
     pizza_bill += 1
