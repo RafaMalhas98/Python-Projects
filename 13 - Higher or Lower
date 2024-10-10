@@ -53,7 +53,7 @@ def higher_lower():
             list_choice_b = get_random_choice()
             # Variable to store the value of the generated choice
             choice_b_string, choice_b_value = concatenate_choice(list_choice_b)
-            #print(f"Compare B: {choice_b_string}")
+            #print(f"Against B: {choice_b_string}")
             #print(choice_b_value)
             is_first_round = False
         else:
@@ -66,7 +66,7 @@ def higher_lower():
             choice_b_string, choice_b_value = concatenate_choice(list_choice_b)
         print(f"Compare A: {choice_a_string}")
         print(art.vs)
-        print(f"Compare B: {choice_b_string}")
+        print(f"Against B: {choice_b_string}")
 
         #Calls the function to check if the generated choices are the same, if they are the same, generates another two
         if not validate_choices(list_choice_a,list_choice_b):
