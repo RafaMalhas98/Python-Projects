@@ -1,0 +1,244 @@
+import os
+import time
+
+
+MENU = {
+    "espresso": {
+        "ingredients": {
+            "water": 50,
+            "coffee": 18,
+        },
+        "cost": 1.5,
+    },
+    "latte": {
+        "ingredients": {
+            "water": 200,
+            "milk": 150,
+            "coffee": 24,
+        },
+        "cost": 2.5,
+    },
+    "cappuccino": {
+        "ingredients": {
+            "water": 250,
+            "milk": 100,
+            "coffee": 24,
+        },
+        "cost": 3.0,
+    }
+}
+
+resources = {
+    "water": 300,
+    "milk": 200,
+    "coffee": 100,
+    "pennies": 20,
+    "nickels": 20,
+    "dimes": 20,
+    "quarters": 20,
+}
+
+coffee_ingredients = ["water", "milk", "coffee"]
+refill_options = ["water", "milk", "coffee", "pennies", "nickels", "dimes", "quarters"]
+total_amount = resources["pennies"] * 0.01 + resources["nickels"] * 0.05 + resources["dimes"] * 0.10 + resources["quarters"] * 0.25
+
+def report_option():
+    """Function that prints the amount of every resource, as well the total amount of money"""
+    global resources
+    global total_amount
+    for key in resources:
+        print(f"{key}: {resources[key]}")
+    print(f"Total Amount: ${total_amount}\n")
+
+def refill_option():
+    """Function that allows the user to refill a specific resource"""
+    global refill_options
+    global resources
+
+    valid_option = False
+    while not valid_option:
+        user_option = input("Please select one option to refill:\n  > Water\n  > Milk\n  > Coffee\n  > Pennies\n  > Nickels\n  > Dimes\n  > Quarters\n  > Exit\n  => ").lower()
+
+        if user_option in refill_options:
+            #Prints the current amount of the specific resource
+            print(f"Current amount: {resources[user_option]}")
+            valid_refill_amount = False
+            while not valid_refill_amount:
+                try:
+                    refill_amount = int(input("How much do you want to refill? => "))
+                    #Adds to the existing amount of the resource
+                    resources[user_option] += refill_amount
+                    print(f"Refilling {user_option.title()}...")
+                    time.sleep(2)
+                    valid_refill_amount = True
+                    os.system('cls')
+                except ValueError:
+                    print("Please provide a valid number.\n")
+        #Exits the refill section
+        elif user_option == "exit":
+            os.system('cls')
+            valid_option = True
+        else:
+            print("Please choose a valid option.\n")
+
+def coffee_option(option):
+    """Function that takes the coffee option, only after validating that the machine has enough resources"""
+    global resources
+    global MENU
+    has_resources = True
+    #Validate resources
+    for key in MENU[option]["ingredients"]:
+        if key in resources:
+            if MENU[option]["ingredients"][key] > resources[key]:
+                print(f"Sorry there is not enough {[key]}.")
+                has_resources = False
+                return has_resources
+
+    return  has_resources
+
+def get_coffee_cost(option):
+    """Function that returns the cost of the user option"""
+    cost = MENU[option]["cost"]
+    return cost
+
+def insert_money():
+    """Function that asks the user to input the number of coins, and returns the total amount and the number of every coin"""
+    coins_options = {
+        "pennies": 0,
+        "nickels": 0,
+        "dimes": 0,
+        "quarters": 0,
+    }
+    user_coins = coins_options
+
+    valid_option = False
+    while not valid_option:
+        try:
+            user_coins["pennies"] = int(input("Please insert the number of pennies => "))
+            valid_option = True
+        except ValueError:
+            print("Please provide a valid number.\n")
+
+    valid_option = False
+    while not valid_option:
+        try:
+            user_coins["nickels"] = int(input("Please insert the number of nickels => "))
+            valid_option = True
+        except ValueError:
+            print("Please provide a valid number.\n")
+
+    valid_option = False
+    while not valid_option:
+        try:
+            user_coins["dimes"] = int(input("Please insert the number of dimes => "))
+            valid_option = True
+        except ValueError:
+            print("Please provide a valid number.\n")
+
+    valid_option = False
+    while not valid_option:
+        try:
+            user_coins["quarters"] = int(input("Please insert the number of quarters => "))
+            valid_option = True
+        except ValueError:
+            print("Please provide a valid number.\n")
+    #Calculates the total amount inputted by the user
+    user_total_amount = round(user_coins["pennies"] * 0.01 + user_coins["nickels"] * 0.05 + user_coins["dimes"] * 0.10 + user_coins["quarters"] * 0.25,2)
+
+    return user_coins, user_total_amount
+
+def validate_user_money(option_cost, user_amount):
+    """Function that validates if the money inputted by the user is enough to pay for the coffee. Returns True or False"""
+    able_to_pay = False
+    if user_amount > option_cost:
+        able_to_pay = True
+    return able_to_pay
+
+
+
+def give_change(option_cost, user_coins, user_amount):
+    """Function that gives back the change for the user. Subtract the amount of coins on the machine and returns the user change"""
+    global resources
+    user_change = round(user_amount - option_cost,2)
+
+    #Adds the coins inputted by the user to the machine
+    for key in user_coins:
+        if key in resources:
+            resources[key] += user_coins[key]
+
+    #Substracts the coins from the machine
+    if user_amount > option_cost:
+        resources["quarters"] -= round(user_change // 0.25,2)
+        aux = user_change % 0.25
+        resources["dimes"] -= round(aux // 0.10,2)
+        aux = aux % 0.10
+        resources["nickels"] -= round(aux // 0.05,2)
+        aux = aux % 0.05
+        resources["pennies"] -= round(aux // 0.01,2)
+
+    return user_change
+
+def remove_resources(option):
+    """Function to remove the specific amount of ingredients"""
+    for key in MENU[option]["ingredients"]:
+        if key in resources:
+            resources[key] -= MENU[option]["ingredients"][key]
+
+
+def coffee_machine():
+    available_options = ["report", "espresso", "latte", "cappuccino", "refill", "off"]
+
+
+    valid_option = False
+    while not valid_option:
+        user_option = input("Please select one of the options below:\n  > report\n  > refill\n  > espresso/latte/cappuccino\n  => ").lower()
+        if user_option in available_options:
+
+            #Calls the function to show the reports
+            if user_option == "report":
+                os.system('cls')
+                report_option()
+
+            #Calls the function to open the refill section
+            elif user_option == "refill":
+                os.system('cls')
+                refill_option()
+
+            #Calls the function to process the coffee request
+            elif user_option == "espresso" or user_option == "latte" or user_option == "cappuccino":
+
+                if coffee_option(option=user_option):
+                    #Calls the function to get the option cost
+                    user_option_cost = get_coffee_cost(user_option)
+                    print(f"An {user_option} costs ${user_option_cost}.")
+
+
+                    #Calls the function so that the user can input the money
+                    user_coins, user_total_amount = insert_money()
+                    #Calls the function to validate if the user is able to buy the coffee
+                    is_able_to_pay = validate_user_money(option_cost=user_option_cost,user_amount=user_total_amount)
+                    if is_able_to_pay:
+                        #Calls the function to return the user change
+                        user_change = give_change(option_cost=user_option_cost,user_coins=user_coins,user_amount=user_total_amount)
+                        #Calls the function to remove the ingredients
+                        remove_resources(user_option)
+                        print(f"Taking a {user_option}...")
+                        time.sleep(2)
+
+                        if user_change > 0:
+                            print(f"Here is your change: ${user_change}")
+                            time.sleep(3)
+                            os.system('cls')
+                    else:
+                        print("Sorry that's not enough money. Refunding money...")
+                        time.sleep(2)
+
+            else:
+                print(f"Shutting down the coffee machine...")
+                time.sleep(2)
+                return
+
+        else:
+            print("\nPlease choose a valid option.")
+
+coffee_machine()
