@@ -1,0 +1,45 @@
+import turtle as t
+import random
+t.colormode(255)
+rgb_colors = [(242, 242, 238), (214, 70, 14), (187, 201, 5), (105, 147, 199), (224, 139, 185), (45, 112, 59), (24, 105, 178), (80, 30, 19), (32, 18, 84), (114, 28, 106), (234, 239, 233), (225, 101, 36), (191, 27, 12), (225, 232, 242), (247, 233, 241), (212, 153, 76), (216, 212, 103), (119, 63, 110), (138, 170, 144), (220, 173, 197), (55, 46, 91), (179, 187, 215), (229, 176, 164), (106, 125, 162), (92, 30, 78), (157, 106, 138), (103, 143, 111), (173, 204, 176), (222, 202, 15), (159, 199, 224)]
+
+'''
+import colorgram
+
+#Extracts 30 colours from the image
+colors_extracted = colorgram.extract('image.jpg',30)
+
+#Saves every part of the color into a variable, assign it to a tuple and then append to a list
+for color in colors_extracted:
+    r = color.rgb.r
+    g = color.rgb.g
+    b = color.rgb.b
+    new_color_tuple = (r, g, b)
+    rgb_colors.append(new_color_tuple)
+'''
+
+#Creates an object
+turtle = t.Turtle()
+#Option to not paint
+turtle.penup()
+#Option to hide the turtle
+turtle.ht()
+#Option to set the speed
+turtle.speed("fastest")
+x_pos = 0
+y_pos = 0
+
+for y in range (10):
+
+    for x in range (10):
+
+        turtle.dot(20, random.choice(rgb_colors))
+        x_pos += 50
+        turtle.setx(x_pos)
+
+    x_pos = 0
+    y_pos += 50
+    turtle.setposition(x_pos, y_pos)
+
+screen = t.Screen()
+screen.exitonclick()
