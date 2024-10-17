@@ -1,0 +1,64 @@
+import turtle as t
+import random
+
+color_list = ["red", "blue", "green", "yellow", "orange", "indigo", "violet"]
+
+#Creates a empty list that will be used to save the objects created
+turtle_list = []
+
+def random_color():
+    """Function to get a random color from the list and then remove it"""
+    new_color = random.choice(color_list)
+    color_list.remove(new_color)
+    return new_color
+
+def turtle_setup():
+    """Function to set up a new turtle object"""
+    new_turtle = t.Turtle()
+    new_turtle.shape("turtle")
+    new_turtle.penup()
+    new_turtle.color(random_color())
+    new_turtle.speed("fastest")
+    return new_turtle
+
+is_race_start = False
+
+#Creation of the screen
+screen = t.Screen()
+screen.setup(width=500, height=400)
+
+#Prompts the user to get a color bet
+valid_option = False
+while not valid_option:
+    user_bet = screen.textinput(title="Make your bet", prompt="Which turtle will win the race? \nAvailable colors:\n>red\n>blue\n>green\n>yellow\n>orange\n>indigo\n>violet").lower()
+    if user_bet in color_list:
+        valid_option = True
+
+#Creation of the turtles
+x_pos = -240
+y_pos = [150, 100, 50, 0, -50, -100, -150]
+
+#Loop to create 7 turtles
+for turtle_index in range (7):
+    turtle = turtle_setup()
+    turtle.goto(x=x_pos, y=y_pos[turtle_index])
+    turtle_list.append(turtle)
+
+if valid_option:
+    is_race_start = True
+
+while is_race_start:
+
+    for turtle in turtle_list:
+        if turtle.xcor() > 230:
+            is_race_start = False
+            turtle_winner = turtle.pencolor()
+            if turtle_winner == user_bet:
+                print(f"You've won!!")
+            else:
+                print(f"You've lost! The {turtle_winner} was the winner!")
+
+        random_move = random.randint(0, 10)
+        turtle.forward(random_move)
+
+screen.exitonclick()
